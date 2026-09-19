@@ -11,7 +11,9 @@ function App() {
   const editingMiniature = miniatures.find((miniature) => miniature.id === editingId)
 
   function addMiniature() {
-    setMiniatures((current) => [...current, createMiniature()])
+    const miniature = createMiniature()
+    setMiniatures((current) => [...current, miniature])
+    setEditingId(miniature.id)
   }
 
   function deleteMiniature(id: string) {
@@ -59,11 +61,20 @@ function App() {
               </button>
             </div>
             <ul className="miniature-list">
-              {miniatures.map((miniature) => (
+              {miniatures.map((miniature, index) => (
                 <li className="miniature-card" key={miniature.id}>
-                  <div>
-                    <h2>{miniature.name || 'Untitled miniature'}</h2>
-                    <p>{miniature.size} · {miniature.copies} {miniature.copies === 1 ? 'copy' : 'copies'}</p>
+                  <div className="card-summary">
+                    <div className="card-thumbnail">
+                      {miniature.image ? (
+                        <img src={miniature.image.source} alt="" />
+                      ) : (
+                        <span>No image<br />Mini {index + 1}</span>
+                      )}
+                    </div>
+                    <div className="card-details">
+                      <h2>{miniature.name || 'Untitled miniature'}</h2>
+                      <p>{miniature.size} · {miniature.copies} {miniature.copies === 1 ? 'copy' : 'copies'}</p>
+                    </div>
                   </div>
                   <div className="card-actions">
                     <button type="button" onClick={() => setEditingId(miniature.id)}>

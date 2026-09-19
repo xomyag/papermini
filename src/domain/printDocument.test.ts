@@ -76,6 +76,12 @@ describe('A4 print document', () => {
     expect(layoutMiniatures([numberedOnly]).pages[0].items[0].heightMm)
       .toBe(printableGeometry(numberedOnly, 1).unfoldedHeightMm)
     expect(printableGeometry(numberedOnly, 1).labelHeightMm).toBeGreaterThan(0)
+    const numberWithoutName = miniature('number-only', {
+      name: 'Goblin', labelEnabled: false, duplicateNumberingEnabled: true,
+    })
+    const numberOnlyItem = layoutMiniatures([numberWithoutName]).pages[0].items[0]
+    expect(numberOnlyItem.heightMm).toBe(printableGeometry(numberWithoutName, 1).unfoldedHeightMm)
+    expect(numberOnlyItem.heightMm).toBeGreaterThan(printableGeometry({ ...numberWithoutName, duplicateNumberingEnabled: false }, 1).unfoldedHeightMm)
   })
 
   it('reports oversized pieces without scaling them or creating an empty page', () => {

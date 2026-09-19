@@ -97,8 +97,7 @@ export function fitLabelText(text: string, widthMm: number, bandHeightMm: number
 }
 
 export function printableLabel(miniature: Pick<Miniature, 'name' | 'labelEnabled' | 'duplicateNumberingEnabled'>, copyNumber?: number) {
-  const name = miniature.name.trim()
-  if (!miniature.labelEnabled) return ''
+  const name = miniature.labelEnabled ? miniature.name.trim() : ''
   const number = miniature.duplicateNumberingEnabled && copyNumber !== undefined ? String(copyNumber) : ''
   return [name, number].filter(Boolean).join(' ')
 }

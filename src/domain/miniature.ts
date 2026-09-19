@@ -31,6 +31,7 @@ export type Miniature = {
   }
   copies: number
   duplicateNumberingEnabled: boolean
+  // Controls only printing the creature name; copy numbering is independent.
   labelEnabled: boolean
   labelPosition: LabelPosition
 }
@@ -58,6 +59,6 @@ export function createMiniature(): Miniature {
     copies: 1,
     duplicateNumberingEnabled: false,
     labelEnabled: true,
-    labelPosition: 'bottom',
+    labelPosition: 'top',
   }
 }

@@ -27,22 +27,12 @@ function MiniatureEditor({ miniature, onChange, onDone }: Props) {
 
   return (
     <section className="editor" aria-label="Edit miniature">
-      <h2>Edit miniature</h2>
-      <MiniatureImageInput
-        image={miniature.image}
-        onChange={(image) => onChange({
-          image,
-          ...(image && image.source !== miniature.image?.source ? {
-            transform: { ...miniature.transform, offsetX: 0, offsetY: 0, scale: 1 },
-          } : {}),
-        })}
-      />
-      {miniature.image && (
-        <MiniatureCanvasEditor
-          miniature={{ ...miniature, image: miniature.image }}
-          onChange={(changes) => onChange({ transform: { ...miniature.transform, ...changes } })}
-        />
-      )}
+      <div className="editor-heading">
+        <h2>Edit miniature</h2>
+        <button className="primary-button" type="button" onClick={onDone} disabled={!copiesValid}>
+          Done
+        </button>
+      </div>
       <div className="editor-fields">
         <label>
           Name
@@ -70,34 +60,54 @@ function MiniatureEditor({ miniature, onChange, onDone }: Props) {
           />
           {!copiesValid && <span className="field-error" id="copies-error">Enter a positive whole number.</span>}
         </label>
-        <label className="checkbox-field">
-          <input
-            type="checkbox"
-            checked={miniature.duplicateNumberingEnabled}
-            onChange={(event) => onChange({ duplicateNumberingEnabled: event.target.checked })}
-          />
-          Duplicate numbering
-        </label>
-        <label className="checkbox-field">
-          <input
-            type="checkbox"
-            checked={miniature.labelEnabled}
-            onChange={(event) => onChange({ labelEnabled: event.target.checked })}
-          />
-          Print label / name
-        </label>
-        <label>
-          Label position
-          <select
-            value={miniature.labelPosition}
-            disabled={!miniature.labelEnabled}
-            onChange={(event) => onChange({ labelPosition: event.target.value as LabelPosition })}
-          >
-            <option value="top">Top</option>
-            <option value="bottom">Bottom</option>
-          </select>
-        </label>
       </div>
+      <fieldset className="print-options">
+        <legend>Print options</legend>
+        <div className="print-option-grid">
+          <label className="checkbox-field">
+            <input
+              type="checkbox"
+              checked={miniature.duplicateNumberingEnabled}
+              onChange={(event) => onChange({ duplicateNumberingEnabled: event.target.checked })}
+            />
+            Number duplicates
+          </label>
+          <label className="checkbox-field">
+            <input
+              type="checkbox"
+              checked={miniature.labelEnabled}
+              onChange={(event) => onChange({ labelEnabled: event.target.checked })}
+            />
+            Print name
+          </label>
+          <label className="print-label-position">
+            Label position
+            <select
+              value={miniature.labelPosition}
+              disabled={!miniature.labelEnabled && !miniature.duplicateNumberingEnabled}
+              onChange={(event) => onChange({ labelPosition: event.target.value as LabelPosition })}
+            >
+              <option value="top">Top</option>
+              <option value="bottom">Bottom</option>
+            </select>
+          </label>
+        </div>
+      </fieldset>
+      <MiniatureImageInput
+        image={miniature.image}
+        onChange={(image) => onChange({
+          image,
+          ...(image && image.source !== miniature.image?.source ? {
+            transform: { ...miniature.transform, offsetX: 0, offsetY: 0, scale: 1 },
+          } : {}),
+        })}
+      />
+      {miniature.image && (
+        <MiniatureCanvasEditor
+          miniature={{ ...miniature, image: miniature.image }}
+          onChange={(changes) => onChange({ transform: { ...miniature.transform, ...changes } })}
+        />
+      )}
       <section className="printable-preview" aria-label="Printable preview">
         <h3>Printable preview</h3>
         <p>{printable.widthMm.toFixed(1)} × {printable.unfoldedHeightMm.toFixed(1)} mm unfolded</p>

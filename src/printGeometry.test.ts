@@ -72,7 +72,7 @@ describe('printable miniature geometry', () => {
 
   it('reserves no label area when printing is disabled or there is no printable text', () => {
     const miniature = { ...createMiniature(), name: 'Goblin' }
-    const disabledBottom = printableGeometry({ ...miniature, labelEnabled: false })
+    const disabledBottom = printableGeometry({ ...miniature, labelEnabled: false, labelPosition: 'bottom' })
     const disabledTop = printableGeometry({ ...miniature, labelEnabled: false, labelPosition: 'top' })
     expect(disabledBottom.labelHeightMm).toBe(0)
     expect(disabledTop).toEqual(disabledBottom)
@@ -86,6 +86,32 @@ describe('printable miniature geometry', () => {
     expect(printableLabel({ ...miniature, name: '' }, 2)).toBe('2')
     expect(printableGeometry({ ...miniature, name: '' }, 2).labelHeightMm).toBeGreaterThan(0)
     expect(printableGeometry({ ...miniature, name: '' }).labelHeightMm).toBe(0)
+  })
+
+  it.each([
+    { labelEnabled: false, duplicateNumberingEnabled: false, expected: '' },
+    { labelEnabled: true, duplicateNumberingEnabled: false, expected: 'Goblin' },
+    { labelEnabled: false, duplicateNumberingEnabled: true, expected: '2' },
+    { labelEnabled: true, duplicateNumberingEnabled: true, expected: 'Goblin 2' },
+  ])('prints name and number independently: name $labelEnabled, number $duplicateNumberingEnabled',
+    ({ labelEnabled, duplicateNumberingEnabled, expected }) => {
+      const miniature = { ...createMiniature(), name: 'Goblin', labelEnabled, duplicateNumberingEnabled }
+      const geometry = printableGeometry(miniature, 2)
+      expect(printableLabel(miniature, 2)).toBe(expected)
+      expect(geometry.labelText).toBe(expected)
+      expect(geometry.labelHeightMm > 0).toBe(Boolean(expected))
+      expect(geometry.sideHeightMm).toBe(geometry.imageHeightMm + geometry.labelHeightMm)
+      expect(geometry.unfoldedHeightMm).toBe(2 * geometry.sideHeightMm)
+      expect(geometry.front.label !== null).toBe(Boolean(expected))
+      expect(geometry.back.label !== null).toBe(Boolean(expected))
+    },
+  )
+
+  it('prints a number for an empty name even when name printing is off', () => {
+    const miniature = { ...createMiniature(), name: '', labelEnabled: false, duplicateNumberingEnabled: true }
+    expect(printableLabel(miniature, 3)).toBe('3')
+    expect(printableGeometry(miniature, 3).labelHeightMm).toBeGreaterThan(0)
+    expect(printableGeometry({ ...miniature, duplicateNumberingEnabled: false }, 3).labelHeightMm).toBe(0)
   })
 
   it('shrinks and then truncates long labels', () => {

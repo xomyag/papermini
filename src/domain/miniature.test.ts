@@ -44,7 +44,7 @@ describe('createMiniature', () => {
       copies: 1,
       duplicateNumberingEnabled: false,
       labelEnabled: true,
-      labelPosition: 'bottom',
+      labelPosition: 'top',
     })
     expect(miniature.id).not.toBe('')
     expect(miniature.image).toBeUndefined()
