@@ -22,7 +22,8 @@ export type Miniature = {
   size: CreatureSize
   image?: MiniatureImage
   transform: {
-    // Unitless offsets from center: 0 is centered; negative and positive values shift along each axis.
+    // Unitless displacement from the centered cover-fit position, measured as fractions of crop width/height.
+    // 0 is centered; negative/positive values shift left/right or up/down. No canvas pixels are stored here.
     offsetX: number
     offsetY: number
     scale: number
@@ -33,6 +34,8 @@ export type Miniature = {
   labelEnabled: boolean
   labelPosition: LabelPosition
 }
+
+export const miniatureHeightLimitsMm = { min: 10, max: 200 } as const
 
 export function parseCopies(value: string): number | null {
   if (!/^[1-9]\d*$/.test(value)) return null

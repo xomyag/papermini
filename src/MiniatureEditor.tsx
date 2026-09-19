@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { creatureWidthMm, parseCopies, type CreatureSize, type LabelPosition, type Miniature } from './domain/miniature'
 import MiniatureImageInput from './MiniatureImageInput'
+import MiniatureCanvasEditor from './MiniatureCanvasEditor'
 
 type Props = {
   miniature: Miniature
@@ -21,7 +22,21 @@ function MiniatureEditor({ miniature, onChange, onDone }: Props) {
   return (
     <section className="editor" aria-label="Edit miniature">
       <h2>Edit miniature</h2>
-      <MiniatureImageInput image={miniature.image} onChange={(image) => onChange({ image })} />
+      <MiniatureImageInput
+        image={miniature.image}
+        onChange={(image) => onChange({
+          image,
+          ...(image && image.source !== miniature.image?.source ? {
+            transform: { ...miniature.transform, offsetX: 0, offsetY: 0, scale: 1 },
+          } : {}),
+        })}
+      />
+      {miniature.image && (
+        <MiniatureCanvasEditor
+          miniature={{ ...miniature, image: miniature.image }}
+          onChange={(changes) => onChange({ transform: { ...miniature.transform, ...changes } })}
+        />
+      )}
       <div className="editor-fields">
         <label>
           Name
