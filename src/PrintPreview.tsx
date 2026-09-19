@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { Miniature } from './domain/miniature'
 import { A4_PRINT, layoutMiniatures } from './domain/printDocument'
 import PrintableMiniature from './PrintableMiniature'
@@ -10,15 +11,42 @@ type Props = {
 const A4_PREVIEW_PX_PER_MM = 2.5
 
 function PrintPreview({ miniatures, onBack }: Props) {
+  const [generating, setGenerating] = useState(false)
+  const [exportError, setExportError] = useState('')
   const document = layoutMiniatures(miniatures)
   const miniatureById = new Map(miniatures.map((miniature) => [miniature.id, miniature]))
+
+  async function downloadPdf() {
+    if (generating || document.pages.length === 0) return
+    setGenerating(true)
+    setExportError('')
+    try {
+      const { createPdf } = await import('./pdf/renderPdf')
+      const bytes = await createPdf(document, miniatures)
+      const blob = new Blob([new Uint8Array(bytes)], { type: 'application/pdf' })
+      const url = URL.createObjectURL(blob)
+      const link = window.document.createElement('a')
+      link.href = url
+      link.download = 'papermini.pdf'
+      link.click()
+      window.setTimeout(() => URL.revokeObjectURL(url), 60_000)
+    } catch {
+      setExportError('Could not generate the PDF. Please try again.')
+    } finally {
+      setGenerating(false)
+    }
+  }
 
   return (
     <section className="print-preview" aria-label="Print Preview">
       <div className="print-preview-heading">
         <h2>Print Preview</h2>
+        <button type="button" onClick={downloadPdf} disabled={generating || document.pages.length === 0}>
+          {generating ? 'Generating PDF…' : 'Download PDF'}
+        </button>
         <button type="button" onClick={onBack}>Back to collection</button>
       </div>
+      {exportError && <p role="alert">{exportError}</p>}
       <p>{document.pages.length} {document.pages.length === 1 ? 'page' : 'pages'} · {document.totalCopies} printable {document.totalCopies === 1 ? 'copy' : 'copies'}</p>
 
       {document.problems.length > 0 && (

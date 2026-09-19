@@ -88,6 +88,11 @@
   background: #f4f4f5;
 }
 
+.print-preview-heading button:disabled {
+  color: #71717a;
+  cursor: wait;
+}
+
 .collection-actions > button:focus-visible,
 .print-preview-heading button:focus-visible {
   outline: 3px solid #71717a;
