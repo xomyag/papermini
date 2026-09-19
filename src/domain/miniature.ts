@@ -10,11 +10,17 @@ export type CreatureSize = keyof typeof creatureWidthMm
 
 export type LabelPosition = 'top' | 'bottom'
 
+export type MiniatureImage = {
+  source: string
+  widthPx: number
+  heightPx: number
+}
+
 export type Miniature = {
   id: string
   name: string
   size: CreatureSize
-  imageData?: string
+  image?: MiniatureImage
   transform: {
     // Unitless offsets from center: 0 is centered; negative and positive values shift along each axis.
     offsetX: number

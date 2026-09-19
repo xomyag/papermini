@@ -47,6 +47,6 @@ describe('createMiniature', () => {
       labelPosition: 'bottom',
     })
     expect(miniature.id).not.toBe('')
-    expect(miniature.imageData).toBeUndefined()
+    expect(miniature.image).toBeUndefined()
   })
 })
