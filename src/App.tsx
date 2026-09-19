@@ -1,9 +1,12 @@
 import { useState } from 'react'
 import { createMiniature, type Miniature } from './domain/miniature'
+import MiniatureEditor from './MiniatureEditor'
 import './App.css'
 
 function App() {
   const [miniatures, setMiniatures] = useState<Miniature[]>([])
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const editingMiniature = miniatures.find((miniature) => miniature.id === editingId)
 
   function addMiniature() {
     setMiniatures((current) => [...current, createMiniature()])
@@ -11,6 +14,12 @@ function App() {
 
   function deleteMiniature(id: string) {
     setMiniatures((current) => current.filter((miniature) => miniature.id !== id))
+  }
+
+  function updateMiniature(id: string, changes: Partial<Miniature>) {
+    setMiniatures((current) => current.map((miniature) =>
+      miniature.id === id ? { ...miniature, ...changes } : miniature,
+    ))
   }
 
   return (
@@ -21,7 +30,14 @@ function App() {
       </header>
 
       <main className="app-main">
-        {miniatures.length === 0 ? (
+        {editingMiniature ? (
+          <MiniatureEditor
+            key={editingMiniature.id}
+            miniature={editingMiniature}
+            onChange={(changes) => updateMiniature(editingMiniature.id, changes)}
+            onDone={() => setEditingId(null)}
+          />
+        ) : miniatures.length === 0 ? (
           <section className="empty-state" aria-label="Miniatures">
             <p>No miniatures added yet.</p>
             <button className="primary-button" type="button" onClick={addMiniature}>
@@ -42,9 +58,14 @@ function App() {
                     <h2>{miniature.name || 'Untitled miniature'}</h2>
                     <p>{miniature.size} · {miniature.copies} {miniature.copies === 1 ? 'copy' : 'copies'}</p>
                   </div>
-                  <button type="button" onClick={() => deleteMiniature(miniature.id)}>
-                    Delete
-                  </button>
+                  <div className="card-actions">
+                    <button type="button" onClick={() => setEditingId(miniature.id)}>
+                      Edit
+                    </button>
+                    <button type="button" onClick={() => deleteMiniature(miniature.id)}>
+                      Delete
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>

@@ -28,6 +28,13 @@ export type Miniature = {
   labelPosition: LabelPosition
 }
 
+export function parseCopies(value: string): number | null {
+  if (!/^[1-9]\d*$/.test(value)) return null
+
+  const copies = Number(value)
+  return Number.isSafeInteger(copies) ? copies : null
+}
+
 export function createMiniature(): Miniature {
   return {
     id: crypto.randomUUID(),

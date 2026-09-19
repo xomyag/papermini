@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createMiniature, creatureWidthMm } from './miniature'
+import { createMiniature, creatureWidthMm, parseCopies } from './miniature'
 
 describe('creature widths', () => {
   it('uses the exact supported widths in millimeters', () => {
@@ -11,6 +11,20 @@ describe('creature widths', () => {
       Gargantuan: 101.6,
     })
   })
+})
+
+describe('parseCopies', () => {
+  it('accepts positive whole numbers', () => {
+    expect(parseCopies('1')).toBe(1)
+    expect(parseCopies('12')).toBe(12)
+  })
+
+  it.each(['', '0', '-1', '1.5', 'NaN', 'Infinity', '1e3', '9007199254740992'])(
+    'rejects invalid copy count %s',
+    (value) => {
+      expect(parseCopies(value)).toBeNull()
+    },
+  )
 })
 
 describe('createMiniature', () => {
