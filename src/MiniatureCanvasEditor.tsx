@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Group, Image as KonvaImage, Layer, Rect, Stage } from 'react-konva'
 import { creatureWidthMm, miniatureHeightLimitsMm, type Miniature } from './domain/miniature'
-import { heightMmFromPixels, imageSize, offsetsFromPosition, positionFromOffsets, zoomAtPoint } from './imageGeometry'
+import { heightMmFromPixels, imagePlacement, offsetsFromPosition, zoomAtPoint } from './imageGeometry'
 
 type Props = {
   miniature: Miniature & { image: NonNullable<Miniature['image']> }
@@ -41,8 +41,7 @@ function MiniatureCanvasEditor({ miniature, onChange }: Props) {
   const pixelsPerMm = Math.min(6, containerWidth / widthMm)
   const crop = { width: widthMm * pixelsPerMm, height: transform.heightMm * pixelsPerMm }
   const original = { width: image.widthPx, height: image.heightPx }
-  const rendered = imageSize(crop, original, transform.scale)
-  const position = positionFromOffsets(crop, rendered, transform)
+  const placement = imagePlacement(crop, original, transform)
   const canvasImage = loaded?.source === image.source ? loaded.element : null
 
   return (
@@ -67,13 +66,13 @@ function MiniatureCanvasEditor({ miniature, onChange }: Props) {
                 <Rect width={crop.width} height={crop.height} fill="#fff" />
                 <KonvaImage
                   image={canvasImage}
-                  x={position.x}
-                  y={position.y}
-                  width={rendered.width}
-                  height={rendered.height}
+                  x={placement.x}
+                  y={placement.y}
+                  width={placement.width}
+                  height={placement.height}
                   draggable
                   onDragMove={(event) => {
-                    const offsets = offsetsFromPosition(event.target.position(), crop, rendered)
+                    const offsets = offsetsFromPosition(event.target.position(), crop, placement)
                     onChange({ offsetX: offsets.x, offsetY: offsets.y })
                   }}
                 />

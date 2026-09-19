@@ -67,7 +67,31 @@
 .collection-actions {
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-bottom: 20px;
+}
+
+.collection-actions > button:not(.primary-button),
+.print-preview-heading button {
+  padding: 8px 12px;
+  border: 1px solid #d4d4d8;
+  border-radius: 6px;
+  background: #fff;
+  color: #18181b;
+  font: inherit;
+  cursor: pointer;
+}
+
+.collection-actions > button:not(.primary-button):hover,
+.print-preview-heading button:hover {
+  background: #f4f4f5;
+}
+
+.collection-actions > button:focus-visible,
+.print-preview-heading button:focus-visible {
+  outline: 3px solid #71717a;
+  outline-offset: 3px;
 }
 
 .miniature-list {
@@ -276,6 +300,97 @@
 
 .canvas-container canvas {
   display: block;
+}
+
+.printable-preview {
+  margin-bottom: 24px;
+}
+
+.printable-preview h3 {
+  margin: 0 0 4px;
+  font-size: 1.125rem;
+}
+
+.printable-preview p {
+  margin: 0 0 12px;
+  color: #52525b;
+}
+
+.printable-preview-viewport {
+  width: 100%;
+  max-height: 700px;
+  overflow: auto;
+  background-color: #f4f4f5;
+  background-image: linear-gradient(45deg, #e4e4e7 25%, transparent 25%),
+    linear-gradient(-45deg, #e4e4e7 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e4e4e7 75%),
+    linear-gradient(-45deg, transparent 75%, #e4e4e7 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+}
+
+.printable-miniature {
+  display: block;
+}
+
+.print-preview-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.print-preview-heading h2 {
+  margin: 0;
+}
+
+.print-preview > p {
+  margin: 12px 0 20px;
+}
+
+.layout-problems {
+  margin-bottom: 20px;
+  padding: 16px;
+  border: 1px solid #f4b4b4;
+  border-radius: 8px;
+  background: #fff7f7;
+}
+
+.layout-problems h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.layout-problems ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.a4-pages {
+  display: grid;
+  gap: 28px;
+}
+
+.a4-page-section h3 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+.a4-page-viewport {
+  max-width: 100%;
+  overflow: auto;
+  padding: 4px;
+}
+
+.a4-page {
+  position: relative;
+  background: #fff;
+  box-shadow: 0 2px 12px rgb(0 0 0 / 15%);
+}
+
+.a4-page-item {
+  position: absolute;
 }
 
 @media (max-width: 600px) {

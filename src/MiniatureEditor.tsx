@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { creatureWidthMm, parseCopies, type CreatureSize, type LabelPosition, type Miniature } from './domain/miniature'
 import MiniatureImageInput from './MiniatureImageInput'
 import MiniatureCanvasEditor from './MiniatureCanvasEditor'
+import PrintableMiniature from './PrintableMiniature'
+import { printableGeometry } from './printGeometry'
 
 type Props = {
   miniature: Miniature
@@ -9,9 +11,13 @@ type Props = {
   onDone: () => void
 }
 
+const PREVIEW_PX_PER_MM = 8
+
 function MiniatureEditor({ miniature, onChange, onDone }: Props) {
   const [copiesInput, setCopiesInput] = useState(String(miniature.copies))
   const copiesValid = parseCopies(copiesInput) !== null
+  const previewCopyNumber = miniature.duplicateNumberingEnabled ? 1 : undefined
+  const printable = printableGeometry(miniature, previewCopyNumber)
 
   function changeCopies(value: string) {
     setCopiesInput(value)
@@ -78,12 +84,13 @@ function MiniatureEditor({ miniature, onChange, onDone }: Props) {
             checked={miniature.labelEnabled}
             onChange={(event) => onChange({ labelEnabled: event.target.checked })}
           />
-          Creature name label
+          Print label / name
         </label>
         <label>
           Label position
           <select
             value={miniature.labelPosition}
+            disabled={!miniature.labelEnabled}
             onChange={(event) => onChange({ labelPosition: event.target.value as LabelPosition })}
           >
             <option value="top">Top</option>
@@ -91,6 +98,17 @@ function MiniatureEditor({ miniature, onChange, onDone }: Props) {
           </select>
         </label>
       </div>
+      <section className="printable-preview" aria-label="Printable preview">
+        <h3>Printable preview</h3>
+        <p>{printable.widthMm.toFixed(1)} × {printable.unfoldedHeightMm.toFixed(1)} mm unfolded</p>
+        <div className="printable-preview-viewport">
+          <PrintableMiniature
+            miniature={miniature}
+            copyNumber={previewCopyNumber}
+            previewPxPerMm={PREVIEW_PX_PER_MM}
+          />
+        </div>
+      </section>
       <button className="primary-button" type="button" onClick={onDone} disabled={!copiesValid}>
         Done
       </button>

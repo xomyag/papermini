@@ -25,6 +25,11 @@ export function positionFromOffsets(crop: Size, rendered: Size, transform: Image
   }
 }
 
+export function imagePlacement(crop: Size, original: Size, transform: ImageTransform) {
+  const rendered = imageSize(crop, original, transform.scale)
+  return { ...positionFromOffsets(crop, rendered, transform), ...rendered }
+}
+
 export function offsetsFromPosition(position: Point, crop: Size, rendered: Size): Point {
   return {
     x: (position.x - (crop.width - rendered.width) / 2) / crop.width,

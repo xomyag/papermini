@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { heightMmFromPixels, imageSize, offsetsFromPosition, positionFromOffsets, zoomAtPoint } from './imageGeometry'
+import { heightMmFromPixels, imagePlacement, imageSize, offsetsFromPosition, positionFromOffsets, zoomAtPoint } from './imageGeometry'
 import type { Miniature } from './domain/miniature'
 
 const transform: Miniature['transform'] = { offsetX: 0, offsetY: 0, scale: 1, heightMm: 25.4 }
@@ -26,6 +26,16 @@ describe('image geometry', () => {
       .toEqual({ x: 125, y: -75 })
     expect(offsetsFromPosition({ x: 125, y: -75 }, crop, { width: 50, height: 50 }))
       .toEqual({ x: 1, y: -1 })
+  })
+
+  it('uses the same composition at physical and canvas scales', () => {
+    const changed = { ...transform, offsetX: 0.2, offsetY: -0.1, scale: 0.8 }
+    const physical = imagePlacement({ width: 25.4, height: 32 }, { width: 400, height: 600 }, changed)
+    const canvas = imagePlacement({ width: 152.4, height: 192 }, { width: 400, height: 600 }, changed)
+    expect(canvas.x).toBeCloseTo(physical.x * 6)
+    expect(canvas.y).toBeCloseTo(physical.y * 6)
+    expect(canvas.width).toBeCloseTo(physical.width * 6)
+    expect(canvas.height).toBeCloseTo(physical.height * 6)
   })
 
   it('keeps the pointer over the same image point while zooming and enforces a minimum scale', () => {

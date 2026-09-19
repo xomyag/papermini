@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { createMiniature, type Miniature } from './domain/miniature'
 import MiniatureEditor from './MiniatureEditor'
+import PrintPreview from './PrintPreview'
 import './App.css'
 
 function App() {
   const [miniatures, setMiniatures] = useState<Miniature[]>([])
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [showPrintPreview, setShowPrintPreview] = useState(false)
   const editingMiniature = miniatures.find((miniature) => miniature.id === editingId)
 
   function addMiniature() {
@@ -30,7 +32,9 @@ function App() {
       </header>
 
       <main className="app-main">
-        {editingMiniature ? (
+        {showPrintPreview && miniatures.length > 0 ? (
+          <PrintPreview miniatures={miniatures} onBack={() => setShowPrintPreview(false)} />
+        ) : editingMiniature ? (
           <MiniatureEditor
             key={editingMiniature.id}
             miniature={editingMiniature}
@@ -47,6 +51,9 @@ function App() {
         ) : (
           <section aria-label="Miniatures">
             <div className="collection-actions">
+              <button type="button" onClick={() => setShowPrintPreview(true)}>
+                Print Preview
+              </button>
               <button className="primary-button" type="button" onClick={addMiniature}>
                 Add miniature
               </button>
